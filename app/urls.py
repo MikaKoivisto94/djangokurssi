@@ -15,12 +15,16 @@ Including another URLconf
 """
 from django.urls import path
 
-from .views import landingview, productlistview, addproduct, deleteproduct, confirmdeleteproduct, edit_product_get
+from .views import productlistview, addproduct, deleteproduct, confirmdeleteproduct, edit_product_get
 from .views import edit_product_post, supplierlistview, addsupplier, deletesupplier, confirmdeletesupplier, searchsuppliers
-from .views import products_filtered
+from .views import products_filtered, loginview, login_action, logout_action, searchproducts
 
 urlpatterns = [
-    path('', landingview),
+
+    #Loginview and authentication method
+    path('', loginview),
+    path('login/', login_action),
+    path('logout/', logout_action),
 
     # Products url's
     path('products/', productlistview),
@@ -30,6 +34,7 @@ urlpatterns = [
     path('edit-product-get/<int:id>/', edit_product_get),
     path('edit-product-post/<int:id>/', edit_product_post),
     path('products-by-supplier/<int:id>/', products_filtered),
+    path('search-products/', searchproducts),
 
     # Suppliers url's
     path('suppliers/', supplierlistview),

@@ -1,12 +1,16 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
 import os
 import sys
 
+if __name__ == '__main__':
 
-def main():
-    """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'suppliers.settings')
+    # If WEBSITE_HOSTNAME is defined as an environment variable, then we're running
+    # on Azure App Service and should use the production settings.
+
+    ############# HUOM ################################################
+    settings_module = "suppliers.production" if 'WEBSITE_HOSTNAME' in os.environ else 'suppliers.settings'
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -16,7 +20,3 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
-
-
-if __name__ == '__main__':
-    main()
