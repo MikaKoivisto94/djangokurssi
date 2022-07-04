@@ -1,0 +1,93 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div class="btn-group" role="group">
+    <a class="btn btn-warning btn-sm" href="/suppliers">Manage suppliers</a>
+    <a class="btn btn-primary btn-sm" href="/products">Manage products</a>
+    <a class="btn btn-secondary btn-sm" href="/customers">Manage customers</a>
+    <a class="btn btn-dark btn-sm" href="/orders">Manage orders</a>
+    <a class="btn btn-danger btn-sm" href="/logout">Logout</a>
+</div>
+
+<button id="add-btn" class="btn btn-success btn-sm" onclick="showaddform()">Add new order</button>
+
+<form method="post" action="/search-orders/">
+    {% csrf_token %}
+    <input class="card-text" class="card-text" type="text" placeholder="Search" name="search">
+    <input type="submit" value="Search" class="btn btn-success btn-sm" name="">
+</form>
+
+<br />
+<!-- Lisäyslomakkeen paikka -->
+<div id="add-div"></div>
+<br />
+
+<h1>Orders</h1>
+
+{% for o in orders %}
+
+<div class="card" style="width: 50rem;">
+    <div class="card-body">
+        <h3 class="card-title">{{o.customer.customer}}</h3>
+        <p class="card-text">OrderDate: {{o.orderdate}} | Freight: {{o.freight}}</p>
+        <p class="card-text">ShipName: {{o.shipname}} | Shipping address: {{o.shipaddress}}</p>
+        <p class="card-text">ShipCity: {{o.shipcity}} | Country: {{o.country}}</p>
+        <a href="/edit-order-get/{{o.id}}/" class="btn btn-primary">Edit</a>
+
+        <a href="/confirm-delete-order/{{o.id}}/" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+{% empty %}
+
+<div class="card" style="width: 50rem;">
+    <div class="card-body">
+        <p class="card-text">No orders found in the database </p>
+    </div>
+</div>
+
+{%endfor%}
+
+<script>
+
+    let z = `
+    <h2 style="color: darkorange;">Please fill in form</h2>
+    
+    <div class="card" style="width: 20rem;">
+        <div class="card-body">
+            <form method="post" action="/add-order/">
+                {%csrf_token %}
+                <br />
+                <label for="customer">Customer</label>
+                <select id="customer" name="customer">
+                {% for c in customers %}
+                  <option value="{{c.id}}">{{c.customer}}</option>
+                  {% endfor %}
+                </select>
+                <br/>
+                <input class="card-text" type="date" placeholder="Order date" name="orderdate">
+                <input class="card-text" type="text" placeholder="Freight" name="freight">
+                <input class="card-text" type="text" placeholder="Shipname" name="shipname">
+                <input class="card-text" type="text" placeholder="Shipping address" name="shipaddress">
+                <input class="card-text" type="text" placeholder="Ship city" name="shipcity">
+                <input class="card-text" type="text" placeholder="Country" name="country">
+                <br />
+                <br />
+                <input type="submit" value="Confirm" class="btn btn-success btn-sm" name="">
+                <input type="submit" id="hide-btn" class="btn btn-secondary btn-sm" onclick="hideaddform()" value="Cancel" name="">
+            </form>
+        </div>
+    </div>`
+
+    function showaddform() {
+        document.getElementById("add-div").innerHTML = z
+    }
+
+    function hideaddform() {
+        document.getElementById("add-div").innerHTML = ""
+    }
+
+</script>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Supplier, Product
+from .models import Supplier, Product, Customer, Order
 from django.contrib.auth import authenticate, login, logout
 
 # Landing after login
@@ -53,13 +53,19 @@ def confirmdeleteproduct(request, id):
     return render (request, "confirmdelprod.html", context)
 
 def deleteproduct(request, id):
-    Product.objects.get(id = id).delete()
-    return redirect(productlistview)
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        Product.objects.get(id = id).delete()
+        return redirect(productlistview)
 
 def edit_product_get(request, id):
-    product = Product.objects.get(id = id)
-    context = {'product', product}
-    return render (request, "edit_product.html", context)
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        product = Product.objects.get(id = id)
+        context = {'product': product}
+        return render (request, "edit_product.html", context)
 
 def edit_product_post(request, id):
     item = Product.objects.get(id = id)
@@ -108,8 +114,11 @@ def confirmdeletesupplier(request, id):
     return render (request, "confirmdelsupp.html", context)
 
 def deletesupplier(request, id):
-    Supplier.objects.get(id = id).delete()
-    return redirect(supplierlistview)
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        Supplier.objects.get(id = id).delete()
+        return redirect(supplierlistview)
 
 def searchsuppliers(request):
     search = request.POST['search']
@@ -117,4 +126,144 @@ def searchsuppliers(request):
     context = {'suppliers': filtered}
     return render (request,"supplierlist.html", context)
 
+def edit_supplier_get(request, id):
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        supplier = Supplier.objects.get(id = id)
+        context = {'supplier': supplier}
+        return render (request, "edit_supplier.html", context)
 
+def edit_supplier_post(request, id):
+    item = Supplier.objects.get(id = id)
+    item.contactname = request.POST['contactname']
+    item.phone = request.POST['phone']
+    item.email = request.POST['email']
+    item.address = request.POST['address']
+    item.country = request.POST['country']
+    item.save()
+    return redirect(supplierlistview)
+
+
+# Customer views
+def customerlistview(request):
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        customerlist = Customer.objects.all()
+        context = {'customers': customerlist}
+        return render(request, "customerlist.html", context)
+
+def addcustomer(request):
+    if not request.user.is_authenticated:
+        return render(request, "loginpage.html")
+    else:
+        a = request.POST['customer']
+        b = request.POST['contactname']
+        c = request.POST['phone']
+        d = request.POST['address']
+        e = request.POST['postalcode']
+        f = request.POST['city']
+        g = request.POST['country']
+        Customer(customer = a, contactname = b, phone = c, address = d, postalcode = e, city = f, country = g).save()
+        return redirect(request.META['HTTP_REFERER'])
+
+def confirmdeletecustomer(request, id):
+    customer = Customer.objects.get(id = id)
+    context = {'customer': customer}
+    return render (request, "confirmdelcust.html", context)
+
+def deletecustomer(request, id):
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        Customer.objects.get(id = id).delete()
+        return redirect(customerlistview)
+
+def searchcustomers(request):
+    search = request.POST['search']
+    filtered = Customer.objects.filter(customer__icontains=search)
+    context = {'customers': filtered}
+    return render (request,"customerlist.html", context)
+
+def edit_customer_get(request, id):
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        customer = Customer.objects.get(id = id)
+        context = {'customer': customer}
+        return render (request, "edit_customer.html", context)
+
+def edit_customer_post(request, id):
+    item = Customer.objects.get(id = id)
+    item.contactname = request.POST['contactname']
+    item.phone = request.POST['phone']
+    item.address = request.POST['address']
+    item.postalcode = request.POST['postalcode']
+    item.city = request.POST['city']
+    item.country = request.POST['country']
+    item.save()
+    return redirect(customerlistview)
+
+
+# Order views
+def orderlistview(request):
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        orderlist = Order.objects.all()
+        customerlist = Customer.objects.all()
+        context = {'orders': orderlist, 'customers': customerlist}
+        return render(request, "orderlist.html", context)
+
+def addorder(request):
+    if not request.user.is_authenticated:
+        return render(request, "loginpage.html")
+    else:
+        a = request.POST['customer']
+        b = request.POST['orderdate']
+        c = request.POST['freight']
+        d = request.POST['shipname']
+        e = request.POST['shipaddress']
+        f = request.POST['shipcity']
+        g = request.POST['country']
+        Order(customer = Customer.objects.get(id = a), orderdate = b, freight = c, shipname = d,
+        shipaddress = e, shipcity = f, country = g).save()
+        return redirect(request.META['HTTP_REFERER'])
+
+def confirmdeleteorder(request, id):
+    order = Order.objects.get(id = id)
+    context = {'order': order}
+    return render (request, "confirmdelorder.html", context)
+
+def deleteorder(request, id):
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        Order.objects.get(id = id).delete()
+        return redirect(orderlistview)
+
+def searchorders(request):
+    search = request.POST['search']
+    filtered = Order.objects.filter(orderdate__icontains=search)
+    context = {'orders': filtered}
+    return render (request,"orderlist.html", context)
+
+def edit_order_get(request, id):
+    if not request.user.is_authenticated:
+        return render(request, 'loginpage.html')
+    else:
+        order = Order.objects.get(id = id)
+        customerlist = Customer.objects.all()
+        context = {'order': order, 'customer': customerlist}
+        return render (request, "edit_order.html", context)
+
+def edit_order_post(request, id):
+    item = Order.objects.get(id = id)
+    item.freight = request.POST['freight']
+    item.shipname = request.POST['shipname']
+    item.shipaddress = request.POST['shipaddress']
+    item.shipcity = request.POST['shipcity']
+    item.country = request.POST['country']
+    item.save()
+    return redirect(orderlistview)

@@ -1,0 +1,41 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div class="card" style="width: 25rem;">
+    <div class="card-header">
+        <h5>Editing {{customer.customer}}'s order</h5>
+
+        <div class="card-body">
+            <form method="post" action="/edit-order-post/{{order.id}}/">
+
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Freight</label>
+                    <input type="text" name="freight" value={{order.freight}}>
+                </div>
+                <div class="form-group">
+                    <label>Shipname</label>
+                    <input type="text" name="shipname" value={{order.shipname}}>
+                </div>
+                <div class="form-group">
+                    <label>Shipping address</label>
+                    <input type="text" name="shipaddress" value={{order.shipaddress}}>
+                </div>
+                <div class="form-group">
+                    <label>Shipcity</label>
+                    <input type="text" name="shipcity" value={{order.shipcity}}>
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" name="country" value={{order.country}}>
+                </div>
+                <input type="submit" value="Update" class="btn btn-success btn-sm">
+                <input type="button" onclick="window.location.href='/orders'" id="hide-btn"
+                    class="btn btn-secondary btn-sm" value="Cancel">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

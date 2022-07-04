@@ -18,7 +18,9 @@ from django.urls import path
 from .views import productlistview, addproduct, deleteproduct, confirmdeleteproduct, edit_product_get
 from .views import edit_product_post, supplierlistview, addsupplier, deletesupplier, confirmdeletesupplier, searchsuppliers
 from .views import products_filtered, loginview, login_action, logout_action, searchproducts
-
+from .views import customerlistview, addcustomer, confirmdeletecustomer, deletecustomer, searchcustomers
+from .views import orderlistview, addorder, confirmdeleteorder, deleteorder, searchorders, edit_supplier_get
+from .views import edit_supplier_post, edit_customer_get, edit_customer_post, edit_order_get, edit_order_post
 urlpatterns = [
 
     #Loginview and authentication method
@@ -42,4 +44,24 @@ urlpatterns = [
     path('delete-supplier/<int:id>/', deletesupplier),
     path('confirm-delete-supplier/<int:id>/', confirmdeletesupplier),
     path('search-suppliers/', searchsuppliers),
+    path('edit-supplier-get/<int:id>/', edit_supplier_get),
+    path('edit-supplier-post/<int:id>/', edit_supplier_post),
+
+    # Customer url's
+    path('customers/', customerlistview),
+    path('add-customer/', addcustomer),
+    path('confirm-delete-customer/<int:id>/', confirmdeletecustomer),
+    path('delete-customer/<int:id>/', deletecustomer),
+    path('search-customers/', searchcustomers),
+    path('edit-customer-get/<int:id>/', edit_customer_get),
+    path('edit-customer-post/<int:id>/', edit_customer_post),
+
+    # Order url's
+    path('orders/', orderlistview),
+    path('add-order/', addorder),
+    path('confirm-delete-order/<int:id>/', confirmdeleteorder),
+    path('delete-order/<int:id>/', deleteorder),
+    path('search-orders/', searchorders),
+    path('edit-order-get/<int:id>/', edit_order_get),
+    path('edit-order-post/<int:id>/', edit_order_post),
 ]
